@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'PushThatButton2' target in the 'PushThatButton2' project
+//
+
+#ifdef __OBJC__
+  #import <UIKit/UIKit.h>
+#endif
