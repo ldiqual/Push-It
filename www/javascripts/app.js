@@ -36,6 +36,7 @@ var App = $.inherit({
 		// jQuery objects
 		this.button = $('.button');
 		this.img = $('.img', this.button);
+		this.loader = $('.loader', this.button);
 		this.pages = {
 			button: $('#button-page'),
 			categories: $('#list-page'),
@@ -59,7 +60,7 @@ var App = $.inherit({
 	placeButton: function() {
 		this.button.css({
 			'margin-top': Math.round(parseInt($(window).height(), 	10 ) / 2)
-									- Math.round(parseInt(this.button.height(), 10 ) / 2)
+									- Math.round(parseInt(this.img.height(), 10 ) / 2)
 		});
 	},
 	
@@ -73,6 +74,7 @@ var App = $.inherit({
 		this.img.bind(this.options.releaseEvent, function(ev) {
 			console.log('Button pressed');
 			ev.preventDefault();
+			this.loader.show();
 			//setTimeout(this.toogleButton.bind(this), this.options.toogleInterval);
 			this.img.removeClass('pressed').addClass('active');
 			this.startGeolocation();
