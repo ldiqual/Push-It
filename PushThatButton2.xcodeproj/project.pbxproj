@@ -30,8 +30,6 @@
 		C0ABBAC515373299009E9C0F /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = C0ABBAC415373299009E9C0F /* icon.png */; };
 		C0ABBAC715373299009E9C0F /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C0ABBAC615373299009E9C0F /* icon@2x.png */; };
 		C0ABBAC915373299009E9C0F /* icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = C0ABBAC815373299009E9C0F /* icon-72.png */; };
-		C0ABBACC15373299009E9C0F /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = C0ABBACB15373299009E9C0F /* Default.png */; };
-		C0ABBACE15373299009E9C0F /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C0ABBACD15373299009E9C0F /* Default@2x.png */; };
 		C0ABBAD015373299009E9C0F /* Capture.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C0ABBACF15373299009E9C0F /* Capture.bundle */; };
 		C0ABBAD215373299009E9C0F /* Cordova.plist in Resources */ = {isa = PBXBuildFile; fileRef = C0ABBAD115373299009E9C0F /* Cordova.plist */; };
 		C0ABBAD615373299009E9C0F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C0ABBAD515373299009E9C0F /* AppDelegate.m */; };
@@ -42,7 +40,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C0ABBA8915373298009E9C0F /* PushThatButton2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PushThatButton2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0ABBA8915373298009E9C0F /* Push It.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Push It.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0ABBA8D15373298009E9C0F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		C0ABBA8F15373298009E9C0F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		C0ABBA9115373298009E9C0F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -127,7 +125,7 @@
 		C0ABBA8A15373298009E9C0F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C0ABBA8915373298009E9C0F /* PushThatButton2.app */,
+				C0ABBA8915373298009E9C0F /* Push It.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -282,7 +280,7 @@
 			);
 			name = PushThatButton2;
 			productName = PushThatButton2;
-			productReference = C0ABBA8915373298009E9C0F /* PushThatButton2.app */;
+			productReference = C0ABBA8915373298009E9C0F /* Push It.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -326,8 +324,6 @@
 				C0ABBAC515373299009E9C0F /* icon.png in Resources */,
 				C0ABBAC715373299009E9C0F /* icon@2x.png in Resources */,
 				C0ABBAC915373299009E9C0F /* icon-72.png in Resources */,
-				C0ABBACC15373299009E9C0F /* Default.png in Resources */,
-				C0ABBACE15373299009E9C0F /* Default@2x.png in Resources */,
 				C0ABBAD015373299009E9C0F /* Capture.bundle in Resources */,
 				C0ABBAD215373299009E9C0F /* Cordova.plist in Resources */,
 				C0ABBADB15373299009E9C0F /* MainViewController.xib in Resources */,
@@ -491,7 +487,7 @@
 					"-weak_library",
 					/usr/lib/libSystem.B.dylib,
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Push It";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -522,7 +518,7 @@
 					"-weak_library",
 					/usr/lib/libSystem.B.dylib,
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Push It";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
@@ -548,6 +544,7 @@
 				C0ABBAE415373299009E9C0F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

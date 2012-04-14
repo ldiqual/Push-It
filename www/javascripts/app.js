@@ -8,7 +8,7 @@ Function.prototype.bind = function(context) {
 
 var App = $.inherit({
 	options: {
-		searchRadius: 5000,
+		searchRadius: 2000, // In meters
 		toogleInterval: 1000,
 		placeTypes: [
 			"restaurant",
@@ -29,6 +29,7 @@ var App = $.inherit({
 	
 	__constructor: function(options) {
 		console.log("App launched");
+		
 		// Merge options
 		$.extend(this.options, options);
 		
@@ -154,43 +155,52 @@ var App = $.inherit({
 		
 		// Google Places
 		// Search places around the current location
-		var places = new google.maps.places.PlacesService(this.map);		
+		var places = new google.maps.places.PlacesService(this.map);
 		this.searchType(places, 0);
 	},
 	
+	/*
+	 * Search for places according to a type.
+	 * Will be recursively called with a different type index,
+	 * until placeTypes.length is reached
+	 */
 	searchType: function(places, typeIndex) {
+		console.log("Searching for type "+ this.options.placeTypes[typeIndex]);
+		
 		var request = {
 			types: [this.options.placeTypes[typeIndex]],
 			location: this.location,
-			radius: this.options.searchRadius			 
+			radius: this.options.searchRadius
 		};
-		places.search(request, function(results, status) {
-			/*
-			switch (status) {
-				case google.maps.places.PlacesServiceStatus.OK: 							console.log('OK'); break;
-				case google.maps.places.PlacesServiceStatus.INVALID_REQUEST: 	console.log('INVALID_REQUEST'); break;
-				case google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT: console.log('OVER_QUERY_LIMIT'); break;
-				case google.maps.places.PlacesServiceStatus.REQUEST_DENIED: 	console.log('REQUEST_DENIED'); break;
-				case google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR: 		console.log('UNKNOWN_ERROR'); break;
-				case google.maps.places.PlacesServiceStatus.ZERO_RESULTS: 		console.log('ZERO_RESULTS'); break;
-				default: console.log("big error");
-			}
-			*/
-			
+		places.search(request, function(results, status) {			
 			// Handling results
 			this.results[this.options.placeTypes[typeIndex]] = results;
 			if (typeIndex < this.options.placeTypes.length - 1) {
-				// Next category
 				this.searchType(places, typeIndex + 1);
 			} else {
-				// All categories have been loaded -> init list
+				var empty = true;
+				for (var name in this.results) {
+					if (this.results[name].length != 0) {
+						empty = false;
+						break;
+					}
+				}
+				if (empty) {
+					if (!debug) {
+						navigator.notification.alert("Can't find any good stuff around you :-(");
+					}
+					return;
+				}
+				
 				this.initList();
 			}
 		}.bind(this))
 	},
 	
-	// Populate the places list
-	initList: function() {
+	/*
+	 * Populate the places list
+	 */
+	initList: function() {		
 		console.log('Populating list');
 		
 		var listPage = $('#list-page').page();
@@ -239,6 +249,9 @@ var App = $.inherit({
 		$.mobile.changePage(this.pages.categories);
 	},
 	
+	/*
+	 * Get directions to the place, make some markers
+	 */
 	loadPlace: function(place) {
 		// Remove the previous markers
 		for (var i=0; i<this.placeMarkers.length; i++) {
@@ -267,10 +280,11 @@ var App = $.inherit({
 				console.log("Can't compute route to this point");
 			}
 		}.bind(this));
-		
-		//this.map.panTo(this.location);	
 	},
 	
+	/*
+	 * Place route on the map, and show it
+	 */ 
 	showRoute: function(result) {
 		this.directionsRenderer.setMap(this.map);
 		this.directionsRenderer.setDirections(result);
