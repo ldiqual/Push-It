@@ -50,6 +50,7 @@ var App = $.inherit({
 		this.location = null;
 		this.selectedResult = null;
 		this.results = {};
+		this.resized = false;
 		
 		// Main events
 		this.placeButton();
@@ -134,11 +135,14 @@ var App = $.inherit({
 		
 		// Fix map center/size issues
 		this.pages.map.bind('pageshow', function(ev) {
-			mapCanvas.css('min-height', $(window).height() - $('[data-role="header"]', this.pages.map).outerHeight());
-			google.maps.event.trigger(this.map, 'resize');
-			//this.map.panTo(this.location);
+			// Map size
+			if (!this.resized) {
+				mapCanvas.css('min-height', $(window).height() - $('[data-role="header"]', this.pages.map).outerHeight());
+				google.maps.event.trigger(this.map, 'resize');
+				this.resized = true;
+			}
 			
-			// Fit the maps to bounds
+			// Fit the map to bounds
 			var bounds = new google.maps.LatLngBounds();
 			bounds.extend(this.location);
 			bounds.extend(this.selectedResult.place.geometry.location);
@@ -179,8 +183,6 @@ var App = $.inherit({
 			suppressMarkers: true,
 			preserveViewport: true
 		});
-
-		//this.pages.map.hide();
 		
 		// Google Places
 		// Search places around the current location
@@ -242,9 +244,25 @@ var App = $.inherit({
 			this.selectedCategory = type;
 			ul.empty();
 			for (var i=0; i<this.results[type].length; i++) {
+				
+				// Rating stars
+				var stars = (Math.round(this.results[type][i].rating) >= 4) ? '<span class="badge"></span>' : '';
+				/*
+				var stars = '<span class="rating">';
+				var rating = Math.round(this.results[type][i].rating);
+				for (var j=0; j<rating; j++) {
+					stars += '<span class="star active"></span>';
+				}
+				for (k=j; k<5; k++) {
+					stars += '<span class="star"></span>';
+				}
+				stars += '</span>';
+				*/
+				
 				// New li item
 				var newLi = $('<li>\
 												<a href="#" data-resulttype="'+ type +'" data-resultindex="'+ i +'">\
+													'+ stars +'\
 													'+ this.results[type][i].name +'\
 												</a>\
 											</li>');
@@ -273,8 +291,7 @@ var App = $.inherit({
 		// First load
 		this.selectedCategory = this.options.placeTypes[0];
 		populateList(this.selectedCategory);
-		
-		console.log('Loading page');
+
 		$.mobile.changePage(this.pages.categories);
 	},
 	
