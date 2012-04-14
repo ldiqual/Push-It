@@ -2,7 +2,7 @@ Push It
 =======
 
 Push It is a simple iPhone application making use of Apache Cordova and jQuery Mobile.
-It consists in a very useful button which, when pressed, search for nice places around you (restaurant, movie theater, cafe, shopping).
+It consists in a very useful button which, when pressed, searches for nice places around you (restaurant, movie theater, cafe, shopping).
 
 Screenshots
 -------
