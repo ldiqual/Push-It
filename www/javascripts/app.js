@@ -24,7 +24,8 @@ var App = $.inherit({
 		},
 		startIcon: "http://www.google.com/mapfiles/dd-start.png",
 		endIcon: 	 "http://www.google.com/mapfiles/dd-end.png",
-		mapZoom: 15
+		mapZoom: 15,
+		minRating: 4
 	},
 	
 	__constructor: function(options) {
@@ -76,20 +77,9 @@ var App = $.inherit({
 			console.log('Button pressed');
 			ev.preventDefault();
 			this.loader.show();
-			//setTimeout(this.toogleButton.bind(this), this.options.toogleInterval);
 			this.img.removeClass('pressed').addClass('active');
 			this.startGeolocation();
 		}.bind(this));
-	},
-	
-	// Toogle the button color periodically
-	toogleButton: function() {
-		if (this.img.hasClass('active')) {
-			this.img.removeClass('active').addClass('toggling');
-		} else {
-			this.img.removeClass('toggling').addClass('active');
-		}
-		setTimeout(this.toogleButton.bind(this), this.options.toogleInterval);
 	},
 	
 	// Geolocate the device and search for places around the resulting position
@@ -245,24 +235,13 @@ var App = $.inherit({
 			ul.empty();
 			for (var i=0; i<this.results[type].length; i++) {
 				
-				// Rating stars
-				var stars = (Math.round(this.results[type][i].rating) >= 4) ? '<span class="badge"></span>' : '';
-				/*
-				var stars = '<span class="rating">';
-				var rating = Math.round(this.results[type][i].rating);
-				for (var j=0; j<rating; j++) {
-					stars += '<span class="star active"></span>';
-				}
-				for (k=j; k<5; k++) {
-					stars += '<span class="star"></span>';
-				}
-				stars += '</span>';
-				*/
+				// Badge
+				var badge = (Math.round(this.results[type][i].rating) >= this.options.minRating) ? '<span class="badge"></span>' : '';
 				
 				// New li item
 				var newLi = $('<li>\
 												<a href="#" data-resulttype="'+ type +'" data-resultindex="'+ i +'">\
-													'+ stars +'\
+													'+ badge +'\
 													'+ this.results[type][i].name +'\
 												</a>\
 											</li>');
