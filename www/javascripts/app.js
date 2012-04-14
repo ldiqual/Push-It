@@ -16,14 +16,15 @@ var App = $.inherit({
 			"store",
 			"cafe"
 		],
-		pressEvent: "mousedown",//"touchstart",
-		releaseEvent: "mouseup",//"touchend",
+		pressEvent: 	(debug) ? "mousedown" : "touchstart",
+		releaseEvent: (debug) ? "mouseup" 	: "touchend",
 		devCoords: {
 			latitude: 44.833,
 			longitude: -0.567
 		},
-		
-		debug: true
+		startIcon: "http://www.google.com/mapfiles/dd-start.png",
+		endIcon: 	 "http://www.google.com/mapfiles/dd-end.png",
+		mapZoom: 15
 	},
 	
 	__constructor: function(options) {
@@ -42,9 +43,13 @@ var App = $.inherit({
 		
 		// Specific properties
 		this.map = null;
+		this.directions = null;
+		this.directionRenderer = null;
+		this.location = null;		
 		this.results = {};
+		this.placeMarkers = [];
 		
-		// Start methods
+		// Main events
 		this.placeButton();
 		this.buttonEvents();
 	},
@@ -65,6 +70,7 @@ var App = $.inherit({
 		}.bind(this));
 		
 		this.img.bind(this.options.releaseEvent, function(ev) {
+			console.log('Button pressed');
 			ev.preventDefault();
 			//setTimeout(this.toogleButton.bind(this), this.options.toogleInterval);
 			this.img.removeClass('pressed').addClass('active');
@@ -84,48 +90,78 @@ var App = $.inherit({
 	
 	// Geolocate the device and search for places around the resulting position
 	startGeolocation: function() {
-
-		// onError Callback receives a PositionError object
-		//
-		
 		var onError = function(error) {
 		  debug.log("Can't get location");
 		}
 
-		this.loadMap()
-		
-		if (!this.options.debug) {
-			navigator.geolocation.getCurrentPosition(this.loadMap.bind(this), onError);
+		if (!debug) {
+			navigator.geolocation.getCurrentPosition(this.loadServices.bind(this), onError);
+		} else {
+			this.loadServices({
+				coords: this.options.devCoords
+			});
 		}
 	},
 	
-	loadMap: function(position) {
-		if (this.options.debug) {
-			var position = {
-				coords: this.options.devCoords
-			}
-		}
-		var location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-		// Google Map
-		var myOptions = {
-			center: location,
-			zoom: 8,
-			mapTypeId: google.maps.MapTypeId.ROADMAP
-		};
-		this.map = new google.maps.Map(document.getElementById('map'), myOptions);
-		
-		console.log(this.pages.map.get(0));
+	/*
+	 * Instanciate the google maps services (maps, direction, places)
+	 * As Places needs a map in its constructor, we create a new map instance
+	 * on an hidden div. That will cause some graphic issues when showing the div,
+	 * we'll fix that later.
+	 */
+	loadServices: function(position) {
+		console.log('Geolocated');
 
+		this.location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+		
+		// Google Map
+		var mapOptions = {
+			center: this.location,
+			zoom:	this.options.mapZoom,
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			mapTypeControl: false,
+			streetViewControl: false,
+			scaleControl: false,
+			zoomControl: false,
+			draggable: false
+		};
+		this.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+		// Map swipe => return to places list
+		this.pages.map.bind('swiperight', function(ev) {
+			ev.preventDefault();
+			$.mobile.changePage(this.pages.categories, {
+				transition: "slide",
+				reverse: true
+			});
+		}.bind(this));
+
+		// Add a marker at the current location
+		var currentLocationMarker = new google.maps.Marker({
+			map: this.map,
+			position: this.location,
+			icon: this.options.startIcon
+		});
+
+		// Google Directions
+		this.directions = new google.maps.DirectionsService();
+		this.directionsRenderer = new google.maps.DirectionsRenderer({
+			map: this.map,
+			suppressMarkers: true
+		});
+
+		this.pages.map.hide();
+		
 		// Google Places
 		// Search places around the current location
-		var places = new google.maps.places.PlacesService(map);		
-		this.searchType(places, location, 0);
+		var places = new google.maps.places.PlacesService(this.map);		
+		this.searchType(places, 0);
 	},
 	
-	searchType: function(places, location, typeIndex) {
+	searchType: function(places, typeIndex) {
 		var request = {
 			types: [this.options.placeTypes[typeIndex]],
-			location: location,
+			location: this.location,
 			radius: this.options.searchRadius			 
 		};
 		places.search(request, function(results, status) {
@@ -145,7 +181,7 @@ var App = $.inherit({
 			this.results[this.options.placeTypes[typeIndex]] = results;
 			if (typeIndex < this.options.placeTypes.length - 1) {
 				// Next category
-				this.searchType(places, location, typeIndex + 1);
+				this.searchType(places, typeIndex + 1);
 			} else {
 				// All categories have been loaded -> init list
 				this.initList();
@@ -155,6 +191,8 @@ var App = $.inherit({
 	
 	// Populate the places list
 	initList: function() {
+		console.log('Populating list');
+		
 		var listPage = $('#list-page').page();
 		var ul = $('ul#places', listPage);
 		ul.listview();
@@ -176,6 +214,8 @@ var App = $.inherit({
 				newLi.bind('tap', function(ev) {
 					ev.preventDefault();
 					var el = $('a', this);
+					
+					console.log('Loading place');
 					self.loadPlace(self.results[el.attr('data-resulttype')][parseInt(el.attr('data-resultindex'), 10)]);
 				});
 				
@@ -194,10 +234,55 @@ var App = $.inherit({
 		// First load
 		this.selectedCategory = this.options.placeTypes[0];
 		populateList(this.selectedCategory);
+		
+		console.log('Loading page');
 		$.mobile.changePage(this.pages.categories);
 	},
 	
 	loadPlace: function(place) {
-		$.mobile.changePage(this.pages.map);
+		// Remove the previous markers
+		for (var i=0; i<this.placeMarkers.length; i++) {
+			this.placeMarkers[i].setMap(null);
+		}
+		
+		// Add a marker on the place
+		var placeMarker = new google.maps.Marker({
+			map: this.map,
+			position: place.geometry.location,
+			icon: this.options.endIcon
+		});
+		this.placeMarkers.push(placeMarker);
+		
+		// Compute direction
+		var request = {
+			origin: this.location,
+			destination: place.geometry.location,
+			travelMode: google.maps.TravelMode.WALKING
+		};
+		this.directions.route(request, function(result, status) {
+			if (status == google.maps.DirectionsStatus.OK) {
+				this.showRoute(result);
+			} else {
+				this.directionsRenderer.setMap(null);
+				console.log("Can't compute route to this point");
+			}
+		}.bind(this));
+		
+		//this.map.panTo(this.location);	
+	},
+	
+	showRoute: function(result) {
+		this.directionsRenderer.setMap(this.map);
+		this.directionsRenderer.setDirections(result);
+		
+		// Show the map
+		console.log('Showing map');
+		this.pages.map.show();
+		$.mobile.changePage(this.pages.map, {
+			transition: "slide"
+		});
+		
+		// Graphic fixes
+		google.maps.event.trigger(this.map, 'resize');
 	}
 });

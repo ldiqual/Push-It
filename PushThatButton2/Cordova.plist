@@ -25,6 +25,7 @@
 		<string>*localhost*</string>
 		<string>*.googleapis.com*</string>
 		<string>*.gstatic.com*</string>
+		<string>*www.google.com*</string>
 	</array>
 	<key>Plugins</key>
 	<dict>

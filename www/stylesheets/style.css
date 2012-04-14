@@ -15,29 +15,19 @@
 }
 #button-page .img.active {
   background: url(../images/button_active.png);
-  -webkit-transition: background 0.5s linear;
-  -moz-transition: background 0.5s linear;
-  -o-transition: background 0.5s linear;
-  -ms-transition: background 0.5s linear;
-  transition: background 0.5s linear;
 }
 #button-page .img.toggling {
   background: url(../images/button_default.png);
-  -webkit-transition: background 0.5s linear;
-  -moz-transition: background 0.5s linear;
-  -o-transition: background 0.5s linear;
-  -ms-transition: background 0.5s linear;
-  transition: background 0.5s linear;
 }
 #button-page .img.pressed {
   background: url(../images/button_pressed.png);
 }
 #list-page #categories .ui-btn .ui-btn-inner {
-  padding-top: 61px !important;
+  padding-top: 37px !important;
 }
 #list-page #categories .ui-btn .ui-icon {
   width: 42px!important;
-  height: 50px!important;
+  height: 30px!important;
   margin-left: -15px !important;
   box-shadow: none!important;
   -moz-box-shadow: none!important;
@@ -47,19 +37,19 @@
 }
 #list-page #categories .ui-btn[data-category="movie_theater"] .ui-icon {
   background: url(../images/icons/movie.png) 50% 50% no-repeat;
-  background-size: 40px 51px;
+  background-size: 19px 26px;
 }
 #list-page #categories .ui-btn[data-category="cafe"] .ui-icon {
   background: url(../images/icons/coffee.png) 50% 50% no-repeat;
-  background-size: 48px 53px;
+  background-size: 24px 27px;
 }
 #list-page #categories .ui-btn[data-category="restaurant"] .ui-icon {
   background: url(../images/icons/restaurant.png) 50% 50% no-repeat;
-  background-size: 36px 53px;
+  background-size: 18px 27px;
 }
 #list-page #categories .ui-btn[data-category="store"] .ui-icon {
   background: url(../images/icons/shopping.png) 50% 50% no-repeat;
-  background-size: 48px 45px;
+  background-size: 26px 20px;
 }
 #map {
   height: 100%;

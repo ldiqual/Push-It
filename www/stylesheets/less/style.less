@@ -19,12 +19,12 @@
 		
 		&.active {
 			background:url(../images/button_active.png);
-			.transition(background, 0.5s, linear);
+			//.transition(background, 0.5s, linear);
 		}
 		
 		&.toggling {
 			background:url(../images/button_default.png);
-			.transition(background, 0.5s, linear);
+			//.transition(background, 0.5s, linear);
 		}
 		
 		&.pressed {
@@ -38,11 +38,11 @@
 	#categories { 
 		.ui-btn {
 			.ui-btn-inner {
-				padding-top: 61px !important;
+				padding-top: 37px !important;
 			}
 			.ui-icon {
 				width: 42px!important;
-				height: 50px!important;
+				height: 30px!important;
 				margin-left: -15px !important;
 				box-shadow: none!important;
 				-moz-box-shadow: none!important;
@@ -51,10 +51,10 @@
 				border-radius: 0 !important;
 			}
 		
-			&[data-category="movie_theater"] .ui-icon { background: url(../images/icons/movie.png) 50% 50% no-repeat; background-size: 40px 51px; }
-			&[data-category="cafe"] .ui-icon { background: url(../images/icons/coffee.png) 50% 50% no-repeat; background-size: 48px 53px; }
-			&[data-category="restaurant"] .ui-icon { background: url(../images/icons/restaurant.png) 50% 50% no-repeat; background-size: 36px 53px; }
-			&[data-category="store"] .ui-icon { background: url(../images/icons/shopping.png) 50% 50% no-repeat; background-size: 48px 45px; }
+			&[data-category="movie_theater"] .ui-icon { background: url(../images/icons/movie.png) 50% 50% no-repeat; background-size: 19px 26px; }
+			&[data-category="cafe"] .ui-icon { background: url(../images/icons/coffee.png) 50% 50% no-repeat; background-size: 24px 27px; }
+			&[data-category="restaurant"] .ui-icon { background: url(../images/icons/restaurant.png) 50% 50% no-repeat; background-size: 18px 27px; }
+			&[data-category="store"] .ui-icon { background: url(../images/icons/shopping.png) 50% 50% no-repeat; background-size: 26px 20px; }
 		}
 	}
 	//display:none;
@@ -63,4 +63,5 @@
 #map {
 	height:100%;
 	width:100%;
+	//display:none;
 }
