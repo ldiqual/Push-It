@@ -38,18 +38,18 @@ var App = $.inherit({
 		this.img = $('.img', this.button);
 		this.loader = $('.loader', this.button);
 		this.pages = {
-			button: $('#button-page'),
-			categories: $('#list-page'),
-			map: $('#map')
+			button: $('#button-page').page(),
+			categories: $('#list-page').page(),
+			map: $('#map-page').page()
 		};
-		
+
 		// Specific properties
 		this.map = null;
 		this.directions = null;
 		this.directionRenderer = null;
-		this.location = null;		
+		this.location = null;
+		this.selectedResult = null;
 		this.results = {};
-		this.placeMarkers = [];
 		
 		// Main events
 		this.placeButton();
@@ -124,20 +124,46 @@ var App = $.inherit({
 			mapTypeId: google.maps.MapTypeId.ROADMAP,
 			mapTypeControl: false,
 			streetViewControl: false,
-			scaleControl: false,
-			zoomControl: false,
-			draggable: false
+			scaleControl: false
 		};
-		this.map = new google.maps.Map(document.getElementById('map'), mapOptions);
+		var mapCanvas = $('#map', this.pages.map);;
+		this.map = new google.maps.Map(mapCanvas.get(0), mapOptions);
 
-		// Map swipe => return to places list
-		this.pages.map.bind('swiperight', function(ev) {
-			ev.preventDefault();
-			$.mobile.changePage(this.pages.categories, {
-				transition: "slide",
-				reverse: true
-			});
+		// Map init event
+		var content = $('[data-role="content"]', this.pages.map);
+		
+		// Fix map center/size issues
+		this.pages.map.bind('pageshow', function(ev) {
+			mapCanvas.css('min-height', $(window).height() - $('[data-role="header"]', this.pages.map).outerHeight());
+			google.maps.event.trigger(this.map, 'resize');
+			//this.map.panTo(this.location);
+			
+			// Fit the maps to bounds
+			var bounds = new google.maps.LatLngBounds();
+			bounds.extend(this.location);
+			bounds.extend(this.selectedResult.place.geometry.location);
+			this.map.setCenter(bounds.getCenter());
+			this.map.fitBounds(bounds);
 		}.bind(this));
+		
+		// Direction events
+		$('.go', this.pages.map).bind('vclick', function(ev) {
+			ev.preventDefault();
+
+			var request = {
+				origin: this.location,
+				destination: this.selectedResult.place.geometry.location,
+				travelMode: google.maps.TravelMode.WALKING
+			};
+			this.directions.route(request, function(result, status) {
+				if (status == google.maps.DirectionsStatus.OK) {
+					this.selectedResult.directionsResult = result;
+					this.showRoute();
+				} else {
+					console.log("Can't compute route to this point");
+				}
+			}.bind(this));			
+		}.bind(this))
 
 		// Add a marker at the current location
 		var currentLocationMarker = new google.maps.Marker({
@@ -150,10 +176,11 @@ var App = $.inherit({
 		this.directions = new google.maps.DirectionsService();
 		this.directionsRenderer = new google.maps.DirectionsRenderer({
 			map: this.map,
-			suppressMarkers: true
+			suppressMarkers: true,
+			preserveViewport: true
 		});
 
-		this.pages.map.hide();
+		//this.pages.map.hide();
 		
 		// Google Places
 		// Search places around the current location
@@ -223,12 +250,12 @@ var App = $.inherit({
 											</li>');
 				
 				// Place loading event
-				newLi.bind('tap', function(ev) {
+				newLi.bind('vclick', function(ev) {
 					ev.preventDefault();
 					var el = $('a', this);
 					
 					console.log('Loading place');
-					self.loadPlace(self.results[el.attr('data-resulttype')][parseInt(el.attr('data-resultindex'), 10)]);
+					self.showPlace(self.results[el.attr('data-resulttype')][parseInt(el.attr('data-resultindex'), 10)]);
 				});
 				
 				// Adding the place item to the list
@@ -254,34 +281,28 @@ var App = $.inherit({
 	/*
 	 * Get directions to the place, make some markers
 	 */
-	loadPlace: function(place) {
-		// Remove the previous markers
-		for (var i=0; i<this.placeMarkers.length; i++) {
-			this.placeMarkers[i].setMap(null);
+	showPlace: function(place) {
+		// Removing previous place and directions
+		if (this.selectedResult != null) {
+			this.selectedResult.marker.setMap(null);
+			this.selectedResult.directionsResult = null;
+			this.directionsRenderer.setMap(null);	
+		} else {
+			this.selectedResult = {};
 		}
-		
+
 		// Add a marker on the place
 		var placeMarker = new google.maps.Marker({
 			map: this.map,
 			position: place.geometry.location,
 			icon: this.options.endIcon
 		});
-		this.placeMarkers.push(placeMarker);
+		this.selectedResult.marker = placeMarker;
+		this.selectedResult.place = place;
 		
-		// Compute direction
-		var request = {
-			origin: this.location,
-			destination: place.geometry.location,
-			travelMode: google.maps.TravelMode.WALKING
-		};
-		this.directions.route(request, function(result, status) {
-			if (status == google.maps.DirectionsStatus.OK) {
-				this.showRoute(result);
-			} else {
-				this.directionsRenderer.setMap(null);
-				console.log("Can't compute route to this point");
-			}
-		}.bind(this));
+		$.mobile.changePage(this.pages.map, {
+			transition: "slide"
+		});
 	},
 	
 	/*
@@ -289,16 +310,6 @@ var App = $.inherit({
 	 */ 
 	showRoute: function(result) {
 		this.directionsRenderer.setMap(this.map);
-		this.directionsRenderer.setDirections(result);
-		
-		// Show the map
-		console.log('Showing map');
-		this.pages.map.show();
-		$.mobile.changePage(this.pages.map, {
-			transition: "slide"
-		});
-		
-		// Graphic fixes
-		google.maps.event.trigger(this.map, 'resize');
+		this.directionsRenderer.setDirections(this.selectedResult.directionsResult);
 	}
 });

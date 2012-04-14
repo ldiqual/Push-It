@@ -16,6 +16,7 @@
 		<script type="text/javascript">
 			// Set to true if you need to debug the app in Chrome/Firefox
 			var debug = false;
+			var app = null;
 		</script>
 		<script type="text/javascript" charset="utf-8" src="javascripts/cordova-1.6.0.js"></script>
 	  <script type="text/javascript" charset="utf-8" src="javascripts/jquery/jquery-1.7.1.js"></script>
@@ -26,18 +27,18 @@
 		<script type="text/javascript" charset="utf-8" src="javascripts/jquery.inherit.min.js"></script>
 		<script type="text/javascript" charset="utf-8" src="javascripts/app.js"></script>
   
-	  <script type="text/javascript">			
+	  <script type="text/javascript">	
 			function onBodyLoad() {		
 				document.addEventListener("deviceready", onDeviceReady, false);
 			}
 	
 			function onDeviceReady() {
-				var app = new App(); 
+				app = new App(); 
 			}
 	
 			$(document).ready(function() {
 				if (debug) {
-					var app = new App();
+					app = new App();
 				}
 			});
 			
@@ -66,7 +67,9 @@
 				<div class="loader"></div>
       </div>
 		</div>
-		<div id="map"></div>
+		<div id="back-to-list">
+			<div class="icon"></div>
+		</div>
     <div data-role="page" id="list-page" data-theme="a">
 			<div data-role="header">
 				<div data-role="navbar" id="categories">
@@ -83,5 +86,15 @@
 				</ul>
 			</div>
     </div>
+		<div data-role="page" id="map-page" data-theme="a">
+			<div data-role="header" data-position="inline">
+				<a href="#list-page" data-transition="slide" data-direction="reverse" data-icon="arrow-l">Categories</a>
+				<h1>Push It</h1>
+				<a href="#" class="go" data-icon="check" data-theme="b">Go !</a>
+			</div>
+			<div data-role="content">
+				<div id="map"></div>
+			</div>
+		</div>
   </body>
 </html>

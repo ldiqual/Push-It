@@ -35,7 +35,7 @@
 #list-page #categories .ui-btn .ui-icon {
   width: 42px!important;
   height: 30px!important;
-  margin-left: -27px !important;
+  margin-left: -20px !important;
   box-shadow: none!important;
   -moz-box-shadow: none!important;
   -webkit-box-shadow: none!important;
@@ -58,7 +58,11 @@
   background: url(../images/icons/shopping.png) 50% 50% no-repeat;
   background-size: 26px 20px;
 }
-#map {
+#map-page .ui-content {
+  height: 100%;
+  padding: 0;
+}
+#map-page .ui-content #map {
   height: 100%;
   width: 100%;
 }
