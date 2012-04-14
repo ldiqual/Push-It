@@ -7,9 +7,9 @@ It consists in a very useful button which, when pressed, search for nice places 
 Screenshots
 -------
 
-[](http://lois.di-qual.net/files/pushit/welcome.png)
-[](http://lois.di-qual.net/files/pushit/list.png)
-[](http://lois.di-qual.net/files/pushit/map.png)
+![](http://lois.di-qual.net/files/pushit/welcome.png)
+![](http://lois.di-qual.net/files/pushit/list.png)
+![](http://lois.di-qual.net/files/pushit/map.png)
 
 How to build
 ------------
