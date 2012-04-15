@@ -5,9 +5,15 @@ Push It is a simple iPhone application making use of Apache Cordova and jQuery M
 It consists in a very useful button which, when pressed, searches for nice places around you (restaurant, movie theater, cafe, shopping).
 
 Screenshots
--------
+-----------
 
 ![](http://lois.di-qual.net/files/pushit/welcome_.png)  ![](http://lois.di-qual.net/files/pushit/list_.png)  ![](http://lois.di-qual.net/files/pushit/map_.png)
+
+Installation
+------------
+
+ * Get `PushIt.ipa` from Github
+ * Open it with Itunes and synchronize your device
 
 How to build
 ------------
